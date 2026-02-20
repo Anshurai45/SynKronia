@@ -44,11 +44,11 @@ export default defineSchema({
     timezone: v.string(),
 
     locationType: v.union(v.literal("physical"), v.literal("online")),
-
     venue: v.optional(v.string()),
     address: v.optional(v.string()),
     city: v.string(),
     state: v.optional(v.string()),
+    country: v.string(),
 
     capacity: v.number(),
     ticketType: v.union(v.literal("free"), v.literal("paid")),
@@ -63,7 +63,7 @@ export default defineSchema({
   })
     .index("by_organizer", ["organizerId"])
     .index("by_category", ["category"])
-    .index("by_startDate", ["startDate"])
+    .index("by_start_date", ["startDate"])
     .index("by_slug", ["slug"])
     .searchIndex("search_title", { searchField: "title" }),
 
