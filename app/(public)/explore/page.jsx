@@ -37,8 +37,9 @@ const ExplorePage = () => {
   const { data: localEvents, isLoading: loadingLocal } = useConvexQuery(
     api.explore.getEventsByLocation,
     {
-      city: currentUser?.city || "Gorakhpur",
-      state: currentUser?.state || "Uttar Pradesh",
+    city: currentUser?.location?.city || "Gorakhpur",
+state: currentUser?.location?.state || "Uttar Pradesh",
+
       limit: 4,
     },
   );
@@ -66,7 +67,7 @@ const ExplorePage = () => {
   };
   const handleCategoryClick = (categoryId) => {
     // Navigate to the event details page using the slug
-    router.push(`/events/${categoryId}`);
+    router.push(`/explore/${categoryId}`);
   };
 
   const handleViewLocalEvents = () => {
@@ -75,7 +76,12 @@ const ExplorePage = () => {
 
     const slug = createLocationSlug(city, state);
     router.push(`/explore/${slug}`);
+
+
   };
+
+    console.log("currentUser:", currentUser);
+console.log("localEvents:", localEvents);
 
   const isLoading = isFeaturedLoading || loadingLocal || loadingPopular;
 
@@ -172,6 +178,8 @@ const ExplorePage = () => {
       )}
 
       {/* local events */}
+
+  
 
       {localEvents && localEvents.length > 0 && (
         <div className="mb-16">
