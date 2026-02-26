@@ -1,45 +1,56 @@
 "use client";
 
-
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { useState } from "react";
-import {  SignInButton, UserButton } from "@clerk/nextjs";
+import { SignInButton, useAuth, UserButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { BarLoader } from "react-spinners";
 import useStoreUser from "../hooks/use-store-user";
-import { Plus, Ticket } from "lucide-react";
+import { Crown, Plus, Ticket } from "lucide-react";
 import { OnboardingModal } from "./onboarding-modal";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import SearchLocationBar from "./search-location-bar";
+import { Badge } from "./ui/badge";
+import UpgradeModal from "./upgrade-modal";
 
 const Header = () => {
-
   const { isLoading } = useStoreUser();
 
-  const{showOnboarding,handleOnboardingComplete,handleOnboardingSkip} =useOnboarding();
+  const { showOnboarding, handleOnboardingComplete, handleOnboardingSkip } =
+    useOnboarding();
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
+  const { has } = useAuth();
+
+  const hasPro = has?.({ plan: "pro" });
+
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl z-20 border-b ">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between ">
+      <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl  z-20 border-b ">
+        <div className="max-w-7xl mx-auto  flex items-center justify-evenly  ">
           {/* logo  */}
           <Link href={"/"}>
-          <Image
-          alt="logoSync"
-            src="/sync.png"
-            width={500}
-            height={500}
-            className="max-w-30"
-            priority
-          />
+            <Image
+              alt="logoSync"
+              src="/sync.png"
+              width={500}
+              height={500}
+              className="max-w-30"
+              priority
+            />
           </Link>
 
           {/* pro badge */}
+          {hasPro && (
+            <Badge className="bg-linear-to-r from-pink-500 to-orange-500 gap-1 text-white ml-3">
+              <Crown className="h-3 w-3" />
+              Pro
+            </Badge>
+          )}
 
           {/* search and location --desktop only */}
 
@@ -49,54 +60,57 @@ const Header = () => {
 
           {/* right side actions */}
           <div className="flex items-center">
-               {/* create event  */}
-                <Button variant="ghost" className="mr-2" size="sm" onClick={() => setShowUpgradeModal(true)}  >
-                  Pricing
-                </Button>
-                <Button variant="ghost" className="mr-2" size="sm" >
-                  <Link href="explore">Explore</Link>
-                </Button>
+            {/* create event  */}
+            { !hasPro && (<Button
+              variant="ghost"
+              className="mr-2"
+              size="sm"
+              onClick={() => setShowUpgradeModal(true)}
+            >
+              Pricing
+            </Button>
+            )}
+            <Button variant="ghost" className="mr-2" size="sm">
+              <Link href="explore">Explore</Link>
+            </Button>
             <Authenticated>
               <Button size="sm" asChild className="flex gap-2 mr-4">
                 <Link href="/create-event">
-                <Plus className="w-4 h-4"/>
-                <span className="hidden sm:inline">Create Event</span>
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline">Create Event</span>
                 </Link>
               </Button>
-             
-                <UserButton >
-                  <UserButton.MenuItems>
-                    <UserButton.Link 
+
+              <UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Link
                     label="My Tickets"
                     labelIcon={<Ticket size={16} />}
                     href="/my-tickets"
-                    />
-                    <UserButton.Link 
+                  />
+                  <UserButton.Link
                     label="My Events"
                     labelIcon={<Ticket size={16} />}
                     href="/my-events"
-                    />
-                  </UserButton.MenuItems>
-                </UserButton>
-              </Authenticated>
+                  />
+                </UserButton.MenuItems>
+              </UserButton>
+            </Authenticated>
 
-             <Unauthenticated>
-                <SignInButton mode="modal">
-
- <Button size="sm" className="mr-2" >Sign In</Button>
-                </SignInButton>
-              </Unauthenticated>
-
-             
-               
+            <Unauthenticated>
+              <SignInButton mode="modal">
+                <Button size="sm" className="mr-2">
+                  Sign In
+                </Button>
+              </SignInButton>
+            </Unauthenticated>
           </div>
         </div>
 
         {/* mobile search and location  */}
-          <div className="md:hidden border-t px-3 py-3 ">
-            <SearchLocationBar />
-          </div>
-
+        <div className="md:hidden border-t px-3 py-3 ">
+          <SearchLocationBar />
+        </div>
 
         {/* loader */}
 
@@ -108,13 +122,18 @@ const Header = () => {
       </nav>
 
       {/* modals  */}
-          <OnboardingModal 
-          isOpen={showOnboarding}
-          onClose={handleOnboardingSkip}
-          onComplete={handleOnboardingComplete}
-          />
+      <OnboardingModal
+        isOpen={showOnboarding}
+        onClose={handleOnboardingSkip}
+        onComplete={handleOnboardingComplete}
+      />
 
-   
+      <UpgradeModal
+      isOpen={showUpgradeModal}
+      onClose={() => setShowUpgradeModal(false) }
+        trigger="header"
+        />
+      
     </>
   );
 };
