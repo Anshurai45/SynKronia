@@ -1,0 +1,116 @@
+"use client";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Loader2, Search } from "lucide-react";
+import Image from "next/image";
+
+export function UnsplashImagePicker({ isOpen, onClose, onSelect }) {
+  const [query, setQuery] = useState("event");
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const searchImages = async (searchQuery) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${searchQuery}&per_page=12&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`,
+      );
+
+      const data = await response.json();
+      setImages(data.results || []);
+    } catch (error) {
+      console.error("error fetching images", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  console.log(images);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    searchImages(query);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden">
+        <DialogHeader>
+          <DialogTitle>Choose Cover Image</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for images..."
+            className={`flex-1`}
+          />
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Search className="w-4 h-4" />
+            )}
+          </Button>
+        </form>
+
+        <div className="overflow-y-auto flex-1  md:px-6">
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 py-4">
+              {images.map((image) => (
+                <button
+                  key={image.id}
+                  onClick={() => onSelect(image.urls.regular)}
+                  className="relative h-32 w-full overflow-hidden rounded-lg border hover:border-purple-500 transition"
+                >
+                  <Image
+                    src={image.urls.small}
+                    alt={
+                      image.alt_description ||
+                      image.description ||
+                      "Unsplash image"
+                    }
+                    className="object-cover"
+                    width={200}
+                    height={200}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {!loading && images.length === 0 && (
+            <div className="text-center text-muted-foreground py-12">
+              Search for images to get started
+            </div>
+          )}
+        </div>
+
+        <div className="text-xs text-muted-foreground">
+          Photos from{" "}
+          <a
+            href="https://unsplash.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Unsplash
+          </a>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
