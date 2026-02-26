@@ -1,0 +1,182 @@
+/* ═══════════════════════════════════════════
+   CREATE EVENT PAGE — Responsive Styles
+   Import this in your page.jsx:
+   import "./create-event.css";
+   (or move to your global CSS / module)
+   ═══════════════════════════════════════════ */
+
+/* ── Main two-column layout ── */
+.create-event-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    align-items: flex-start;
+    max-width: 1152px;
+    margin: 0 auto;
+}
+
+/* ── LEFT PANEL ── */
+.create-event-left {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+}
+
+/* ── Cover Image Box ── */
+.cover-image-box {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.07);
+    margin-bottom: 20px;
+    transition: background-color 0.2s;
+}
+
+.cover-image-box:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.cover-image-box span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    text-align: center;
+    padding: 16px;
+}
+
+.cover-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ── Color dots row ── */
+.color-presets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.color-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s;
+    flex-shrink: 0;
+}
+
+.color-dot:hover {
+    transform: scale(1.12);
+}
+
+.color-dot.active {
+    border-color: white;
+}
+
+.color-dot.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.color-dot-add {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px dashed #c4b5fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    transition: border-color 0.2s;
+    flex-shrink: 0;
+}
+
+.color-dot-add:hover {
+    border-color: #a78bfa;
+}
+
+/* ── RIGHT PANEL — Form ── */
+.create-event-right {
+    flex-grow: 1;
+    min-width: 0;
+    /* prevents overflow in flex */
+}
+
+/* ── Date/Time grid ── */
+.datetime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* ── Location grid ── */
+.location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ═══════════════════════════════════════════
+   TABLET  ≤ 768px
+   Stack left + right vertically
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .create-event-layout {
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .create-event-left {
+        width: 100%;
+        position: static;
+        /* unstick on mobile */
+    }
+
+    .cover-image-box {
+        height: 220px;
+        /* shorter on mobile */
+    }
+
+    .create-event-right {
+        width: 100%;
+    }
+
+    .datetime-grid {
+        grid-template-columns: 1fr;
+        /* stack Start / End */
+        gap: 16px;
+    }
+
+    .location-grid {
+        grid-template-columns: 1fr;
+        /* stack State / City */
+        gap: 12px;
+    }
+}
+
+/* ═══════════════════════════════════════════
+   SMALL MOBILE  ≤ 480px
+   ═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+    .create-event-page {
+        padding: 16px;
+    }
+
+    .create-event-layout {
+        gap: 20px;
+    }
+
+    .cover-image-box {
+        height: 180px;
+    }
+}

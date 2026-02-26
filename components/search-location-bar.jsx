@@ -88,6 +88,7 @@ const handleLocationSelect = (city, state) => {
   router.push(`/explore/${slug}`);
 };
 
+console.log(currentUser)
 
   return (
     <div className="flex items-center">
