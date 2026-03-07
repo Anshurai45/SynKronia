@@ -31,17 +31,12 @@ const Header = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl  z-20 border-b ">
-        <div className="max-w-7xl mx-auto  flex items-center justify-evenly  ">
+        <div className="max-w-7xl mx-auto  flex items-center justify-evenly  h-20 ">
           {/* logo  */}
           <Link href={"/"}>
-            <Image
-              alt="logoSync"
-              src="/sync.png"
-              width={500}
-              height={500}
-              className="max-w-30"
-              priority
-            />
+            <div className="text-white font-extrabold text-xl tracking-tight mb-1">
+              SYNK<span className="text-purple-400">RONIA</span>
+            </div>
           </Link>
 
           {/* pro badge */}
@@ -61,14 +56,15 @@ const Header = () => {
           {/* right side actions */}
           <div className="flex items-center">
             {/* create event  */}
-            { !hasPro && (<Button
-              variant="ghost"
-              className="mr-2"
-              size="sm"
-              onClick={() => setShowUpgradeModal(true)}
-            >
-              Pricing
-            </Button>
+            {!hasPro && (
+              <Button
+                variant="ghost"
+                className="mr-2"
+                size="sm"
+                onClick={() => setShowUpgradeModal(true)}
+              >
+                Pricing
+              </Button>
             )}
             <Button variant="ghost" className="mr-2" size="sm">
               <Link href="explore">Explore</Link>
@@ -129,11 +125,10 @@ const Header = () => {
       />
 
       <UpgradeModal
-      isOpen={showUpgradeModal}
-      onClose={() => setShowUpgradeModal(false) }
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
         trigger="header"
-        />
-      
+      />
     </>
   );
 };
