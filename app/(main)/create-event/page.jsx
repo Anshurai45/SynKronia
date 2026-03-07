@@ -40,7 +40,7 @@ import Image from "next/image";
 // ✅ Import the responsive CSS file
 import "./create-event.css";
 import { UnsplashImagePicker } from "@/components/unsplash-image-picker";
- import AiEventCreator from "./_components/ai-event-creator"
+import AiEventCreator from "./_components/ai-event-creator";
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const eventSchema = z.object({
@@ -71,12 +71,11 @@ export default function CreateEventPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const { has } = useAuth();
   const hasPro = has?.({ plan: "pro" });
 
   const { data: currentUser } = useConvexQuery(api.users.getCurrentUser);
-const createEvent = useMutation(api.events.createEvent);
+  const createEvent = useMutation(api.events.createEvent);
 
   const {
     register,
@@ -115,20 +114,27 @@ const createEvent = useMutation(api.events.createEvent);
     return City.getCitiesOfState("IN", st.isoCode);
   }, [selectedState, indianStates]);
 
-
-
   const colorPresets = [
     "#1e3a8a",
-    ...(hasPro ? ["#4c1d95", "#065f46", "#92400e", "#7f1d1d", "#831843",  "#0f172a", 
-        "#111827", 
-        "#1f2937", 
-        "#3f3f46", 
-        "#0c0a09", 
-        "#5b21b6", 
-        "#134e4a", 
-        "#78350f", 
-        "#2e1065", 
-        "#052e16", ] : []),
+    ...(hasPro
+      ? [
+          "#4c1d95",
+          "#065f46",
+          "#92400e",
+          "#7f1d1d",
+          "#831843",
+          "#0f172a",
+          "#111827",
+          "#1f2937",
+          "#3f3f46",
+          "#0c0a09",
+          "#5b21b6",
+          "#134e4a",
+          "#78350f",
+          "#2e1065",
+          "#052e16",
+        ]
+      : []),
   ];
 
   const handleColorClick = (color) => {
@@ -150,12 +156,11 @@ const createEvent = useMutation(api.events.createEvent);
 
   console.log(createEvent, "create event");
   // console.log(api.events ,"api");
-// console.log(api.events.createEvent, "create");
+  // console.log(api.events.createEvent, "create");
 
   const onSubmit = async (data) => {
-
     console.log(data);
-    
+
     try {
       const start = combineDateTime(data.startDate, data.startTime);
       const end = combineDateTime(data.endDate, data.endTime);
@@ -213,17 +218,14 @@ const createEvent = useMutation(api.events.createEvent);
     }
   };
 
-
-  const handleAIGenerate =(generatedData) => {
-     setValue("title", generatedData.title);
+  const handleAIGenerate = (generatedData) => {
+    setValue("title", generatedData.title);
     setValue("description", generatedData.description);
     setValue("category", generatedData.category);
     setValue("capacity", generatedData.suggestedCapacity);
     setValue("ticketType", generatedData.suggestedTicketType);
     toast.success("Event details filled! Customize as needed.");
-
-
-  }
+  };
 
   return (
     /* ✅ "create-event-page" class used for small-mobile padding override */
@@ -241,7 +243,6 @@ const createEvent = useMutation(api.events.createEvent);
         )}
       </div>
 
-    
       {/*
         ✅ "create-event-layout" CSS class:
         — desktop: flex-direction: row  (side by side)
@@ -301,7 +302,10 @@ const createEvent = useMutation(api.events.createEvent);
                     !hasPro && color !== "#1e3a8a" ? "locked" : ""
                   }`}
                   // className={`w-10 h-10 rounded-full border-2 transition-all ${!hasPro && color !== "1e3a8a" ? "opacity-40 cursor-not-allowed " :"hover:scale-110"}`}
-                  style={{ backgroundColor: color , borderColor: themeColor === color ? "white" :"transparent"}}
+                  style={{
+                    backgroundColor: color,
+                    borderColor: themeColor === color ? "white" : "transparent",
+                  }}
                   onClick={() => handleColorClick(color)}
                   title={
                     !hasPro && color !== "#1e3a8a"
@@ -342,9 +346,10 @@ const createEvent = useMutation(api.events.createEvent);
           — ≤768px:  width:100%
         */}
 
-        
         <div className="create-event-right">
-           <div className="mb-4"><AiEventCreator  onEventGenerated={handleAIGenerate}  /> </div>
+          <div className="mb-4 text-right">
+            <AiEventCreator onEventGenerated={handleAIGenerate} />{" "}
+          </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Event Title */}
             <div>
@@ -354,9 +359,7 @@ const createEvent = useMutation(api.events.createEvent);
                 className="text-3xl font-semibold bg-transparent border-none focus-visible:ring-0 text-white placeholder:text-white/40 px-3 mb-2"
               />
               {errors.title && (
-                <p className="text-sm text-red-600">
-                  {errors.title.message}
-                </p>
+                <p className="text-sm text-red-600">{errors.title.message}</p>
               )}
             </div>
 
@@ -610,13 +613,11 @@ const createEvent = useMutation(api.events.createEvent);
               )}
             </div>
 
-            
-
             {/* Submit */}
             <Button
               variant="default"
               type="submit"
-            disabled={isSubmitting}
+              disabled={isSubmitting}
               className="w-full py-6 text-lg  rounded-xl font-semibold mt-6"
             >
               {isLoading ? (
@@ -631,16 +632,16 @@ const createEvent = useMutation(api.events.createEvent);
         </div>
       </div>
 
-    {showImagePicker && (
-      <UnsplashImagePicker 
-      isOpen={showImagePicker}
-      onClose ={() => setShowImagePicker(false)}
-       onSelect={(url) => {
-        setValue("coverImage",url);
-        setShowImagePicker(false);
-       }}
-      />
-    )}
+      {showImagePicker && (
+        <UnsplashImagePicker
+          isOpen={showImagePicker}
+          onClose={() => setShowImagePicker(false)}
+          onSelect={(url) => {
+            setValue("coverImage", url);
+            setShowImagePicker(false);
+          }}
+        />
+      )}
 
       <UpgradeModal
         isOpen={showUpgradeModal}
