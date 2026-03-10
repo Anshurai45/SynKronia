@@ -45,51 +45,94 @@ export const store = mutation({
   },
 });
 
-export const getCurrentUser = query({
-    handler: async (ctx) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) {
-            return null;
-        }
+// export const getCurrentUser = query({
+//     handler: async (ctx) => {
+//         const identity = await ctx.auth.getUserIdentity();
+//         if (!identity) {
+//             return null;
+//         }
 
-        const user = await ctx.db.query("users")
-            .withIndex("by_token", (q) =>
-                q.eq("tokenIdentifier", identity.tokenIdentifier)
-            )
-            .unique();
+//         const user = await ctx.db.query("users")
+//             .withIndex("by_token", (q) =>
+//                 q.eq("tokenIdentifier", identity.tokenIdentifier)
+//             )
+//             .unique();
 
-            if (!user) {
-                throw new Error("User not found");
-            }
+//             if (!user) {
+//                 throw new Error("User not found");
+//             }
 
-            return user;
-    },
+//             return user;
+//     },
 
-});
+// });
 
     
 
-export const completeOnboarding =mutation({
+// export const completeOnboarding =mutation({
 
-    args: {
-        location: v.object({
-            city: v.string(),
-            state: v.optional(v.string()),
-            country: v.string(),
-        }),
-        interests :v.array(v.string()),
-    },
-    handler: async (ctx,args) => {
-       const user = await ctx.runQuery(internal.users.getCurrentUser);
+//     args: {
+//         location: v.object({
+//             city: v.string(),
+//             state: v.optional(v.string()),
+//             country: v.string(),
+//         }),
+//         interests :v.array(v.string()),
+//     },
+//     handler: async (ctx,args) => {
+//        const user = await ctx.runQuery(internal.users.getCurrentUser);
 
-       await ctx.db.patch(user._id,{
-        location: args.location,
-        interests: args.interests,
-        hasCompletedOnboarding: true,
-        updatedAt:Date.now(),
+//        await ctx.db.patch(user._id,{
+//         location: args.location,
+//         interests: args.interests,
+//         hasCompletedOnboarding: true,
+//         updatedAt:Date.now(),
 
-       });
+//        });
 
-       return user._id;
-    },
+//        return user._id;
+//     },
+// });
+
+
+export const getCurrentUser = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+
+    if (!user) return null; // ✅ throw nahi, null return karo
+
+    return user;
+  },
+});
+
+export const completeOnboarding = mutation({
+  args: {
+    location: v.object({
+      city: v.string(),
+      state: v.optional(v.string()),
+      country: v.string(),
+    }),
+    interests: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) throw new Error("User not authenticated"); // ✅ yahan throw sahi hai
+
+    await ctx.db.patch(user._id, {
+      location: args.location,
+      interests: args.interests,
+      hasCompletedOnboarding: true,
+      updatedAt: Date.now(),
+    });
+
+    return user._id;
+  },
 });

@@ -843,9 +843,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ════════════════════════════════
-    PRICING
-════════════════════════════════ */}
+    
         <section
           className="py-24 px-6"
           style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
@@ -859,8 +857,8 @@ export default function Home() {
                 Plans for Everyone
               </h2>
               <p className="text-gray-400 font-light max-w-md mx-auto text-sm leading-relaxed">
-                Whether you're attending your first event or running a
-                10,000-person festival — we've got you covered.
+                Whether you&apos;re attending your first event or running a
+                10,000-person festival — we&apos;ve got you covered.
               </p>
             </div>
 
@@ -1118,7 +1116,7 @@ export default function Home() {
                   </div>
                   <p className="text-gray-300 font-light text-sm leading-relaxed italic mb-6">
                     <span className="text-3xl text-purple-400 font-bold leading-none align-[-12px] mr-1">
-                      "
+                      
                     </span>
                     {t.text}
                   </p>
@@ -1212,7 +1210,7 @@ export default function Home() {
                 >
                   <span className="text-green-400 text-xl">✓</span>
                   <span className="text-green-400 text-sm font-medium">
-                    You're on the list! We'll be in touch.
+                    You&apos;re on the list! We&apos;ll be in touch.
                   </span>
                 </div>
               )}

@@ -8,9 +8,7 @@ export const getEventDashboard = query({
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) return null;
 
     const event = await ctx.db.get(args.eventId);
     if (!event) {
@@ -30,10 +28,10 @@ export const getEventDashboard = query({
 
     // Calculate stats
     const totalRegistrations = registrations.filter(
-      (r) => r.status === "confirmed"
+      (r) => r.status === "confirmed",
     ).length;
     const checkedInCount = registrations.filter(
-      (r) => r.checkedIn && r.status === "confirmed"
+      (r) => r.checkedIn && r.status === "confirmed",
     ).length;
     const pendingCount = totalRegistrations - checkedInCount;
 
@@ -54,7 +52,7 @@ export const getEventDashboard = query({
     const timeUntilEvent = event.startDate - now;
     const hoursUntilEvent = Math.max(
       0,
-      Math.floor(timeUntilEvent / (1000 * 60 * 60))
+      Math.floor(timeUntilEvent / (1000 * 60 * 60)),
     );
 
     const today = new Date().setHours(0, 0, 0, 0);

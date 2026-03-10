@@ -2,10 +2,9 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-const generateQRCode= () =>{
-
-    return `SYNK-${Date.now()}-${Math.random().toString(36).substr(2,9).toUpperCase()}`;
-}
+const generateQRCode = () => {
+  return `SYNK-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+};
 
 export const registerForEvent = mutation({
   args: {
@@ -34,7 +33,7 @@ export const registerForEvent = mutation({
     const existingRegistration = await ctx.db
       .query("registrations")
       .withIndex("by_event_user", (q) =>
-        q.eq("eventId", args.eventId).eq("userId", user._id)
+        q.eq("eventId", args.eventId).eq("userId", user._id),
       )
       .unique();
 
@@ -110,11 +109,10 @@ export const registerForEvent = mutation({
 //       await ctx.db.patch(args.eventId, {
 //       registrationCount: event.registrationCount + 1,
 //     });
-      
+
 //         return registrationId;
 //   },
 // });
-
 
 // Check if user is registered for an event
 export const checkRegistration = query({
@@ -127,21 +125,19 @@ export const checkRegistration = query({
     const registration = await ctx.db
       .query("registrations")
       .withIndex("by_event_user", (q) =>
-        q.eq("eventId", args.eventId).eq("userId", user._id)
+        q.eq("eventId", args.eventId).eq("userId", user._id),
       )
       .unique();
 
     return registration;
   },
-
-
-  
 });
 
 // Get user's registrations (tickets)
 export const getMyRegistrations = query({
   handler: async (ctx) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) return [];
 
     const registrations = await ctx.db
       .query("registrations")
@@ -157,7 +153,7 @@ export const getMyRegistrations = query({
           ...reg,
           event,
         };
-      })
+      }),
     );
 
     return registrationsWithEvents;
@@ -169,6 +165,7 @@ export const cancelRegistration = mutation({
   args: { registrationId: v.id("registrations") },
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) throw new Error("You must be logged in");
 
     const registration = await ctx.db.get(args.registrationId);
     if (!registration) {
@@ -201,13 +198,12 @@ export const cancelRegistration = mutation({
   },
 });
 
-
-
 // Get registrations for an event (for organizers)
 export const getEventRegistrations = query({
   args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) return [];
 
     const event = await ctx.db.get(args.eventId);
     if (!event) {
@@ -228,14 +224,12 @@ export const getEventRegistrations = query({
   },
 });
 
-
-
-
 // Check-in attendee with QR code
 export const checkInAttendee = mutation({
   args: { qrCode: v.string() },
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
+    if (!user) throw new Error("You must be logged in");
 
     const registration = await ctx.db
       .query("registrations")
@@ -268,7 +262,7 @@ export const checkInAttendee = mutation({
     // Check in
     await ctx.db.patch(registration._id, {
       checkedIn: true,
-     checkedAt: Date.now(),
+      checkedAt: Date.now(),
     });
 
     return {
